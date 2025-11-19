@@ -1,0 +1,105 @@
+.textarea {
+  -moz-appearance: textfield-multiline;
+  -webkit-appearance: textarea;
+  border: 1px solid gray;
+  font: medium -moz-fixed;
+  font: -webkit-small-control;
+  overflow: auto;
+  padding: 2px;
+  resize: both;
+}
+
+.field .input .attached.label {
+  opacity: .6;
+}
+
+.field.error .input .attached.label {
+  color: #9f3a38;
+  background: #fffefe;
+  border: 1px solid #e0b4b4;
+}
+
+.field .input textarea:focus + .attached.label {
+  opacity: .4;
+}
+
+.field .input .attached.label:hover {
+  opacity: .8;
+}
+
+.field.error .textarea[contenteditable=true] {
+  color: #9f3a38;
+  background: #fff6f6;
+  border-color: #e0b4b4;
+  /*border-radius: '';*/
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.textarea:empty:before {
+  content: attr(aria-placeholder);
+  color: gray;
+}
+
+.textarea:focus:before {
+  content: none;
+}
+
+.textarea-option>.buttons>.button>.icons {
+  margin-left: 0;
+  margin-right: 0.18em;
+}
+
+.textarea-option .buttons:not(.basic) .button .icons .corner.icon {
+  text-shadow: -1px -1px 0 #e0e1e2, 1px -1px 0 #e0e1e2, -1px 1px 0 #e0e1e2, 1px 1px 0 #e0e1e2;
+}
+
+.textarea-option .buttons .text-bg-color .icons .square.icon {
+  font-size: 1.1em;
+}
+
+.textarea-option .buttons .text-bg-color .icons .font.icon {
+  font-size: 0.9em;
+  color: #fff;
+}
+
+.sp-container:not(.sp-palette-only) {
+  min-width: 420px;
+}
+
+.sp-container.sp-palette-only {
+  min-width: 200px;
+}
+
+.dropdown .text span {
+  display: none;
+}
+
+sub {
+  vertical-align: sub;
+}
+
+sup {
+  vertical-align: super;
+}
+
+.keyboard.icons .square.icon {
+  transform: scale(1.7);
+}
+
+.keyboard.icons .corner.icon {
+  font-family: 'Noto Sans TC';
+  font-size: .75em;
+  font-weight: 900;
+}
+
+.dropdown .menu .item {
+  align-items: center;
+  display: flex;
+}
+
+.char.icon {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 700;
+  transform: scale(1.1) translateY(-1px);
+}

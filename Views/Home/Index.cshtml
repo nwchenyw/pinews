@@ -1,0 +1,30 @@
+@model IEnumerable<PiNewsCore.Models.Reverse.Article>
+@{
+    ViewData["Title"] = "首頁";
+}
+
+<h1>最新文章</h1>
+@if (ViewData["DbError"] != null)
+{
+    <div class="alert alert-warning">資料庫錯誤：@ViewData["DbError"]</div>
+}
+
+<div class="list-group">
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">目前沒有文章可顯示。</div>
+    }
+    else
+    {
+        @foreach (var item in Model)
+        {
+            <a class="list-group-item list-group-item-action" href="/Articles/Details/@item.Id">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">@item.Title</h5>
+                    <small>@(item.DateTime.HasValue ? item.DateTime.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm") : "")</small>
+                </div>
+                <p class="mb-1">@((item.Content ?? string.Empty).Length > 150 ? (item.Content ?? string.Empty).Substring(0, 150) + "..." : item.Content)</p>
+            </a>
+        }
+    }
+</div>

@@ -1,0 +1,25 @@
+@model IEnumerable<PiNewsCore.Models.Reverse.Article>
+@{
+    ViewData["Title"] = "文章列表";
+}
+
+<h1>文章列表</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>標題</th>
+            <th>分類</th>
+            <th>時間</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var a in Model)
+        {
+            <tr>
+                <td><a href="/Articles/Details/@a.Id">@a.Title</a></td>
+                <td>@a.Category</td>
+                <td>@(a.DateTime.HasValue ? a.DateTime.Value.ToLocalTime().ToString("yyyy-MM-dd") : "")</td>
+            </tr>
+        }
+    </tbody>
+</table>

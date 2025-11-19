@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>網站維護中 - 系統維護公告</title>
+    <link rel="stylesheet" href="semantic/dist/semantic.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            font-family: 'Lato', 'Microsoft JhengHei', sans-serif;
+        }
+
+        .maintenance-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .maintenance-container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .maintenance-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .maintenance-icon {
+            font-size: 4rem;
+            color: #2185d0;
+            margin-bottom: 1rem;
+            animation: pulse 2s infinite;
+        }
+
+        .maintenance-title {
+            font-size: 2.5rem !important;
+            color: #1b1c1d !important;
+            margin-bottom: 1rem !important;
+        }
+
+        .maintenance-subtitle {
+            font-size: 1.2rem;
+            color: #767676;
+            line-height: 1.6;
+        }
+
+        .status-segment {
+            border-left: 4px solid #2185d0 !important;
+            background: #f0f8ff !important;
+        }
+
+        .status-icon {
+            color: #2185d0;
+            font-size: 1.5rem;
+        }
+
+        .contact-grid {
+            margin-top: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            background: #2185d0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .social-buttons {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .social-buttons .ui.button {
+            margin: 0.25rem;
+        }
+
+        .maintenance-details {
+            background: #fffbf0 !important;
+            border-left: 4px solid #fbbd08 !important;
+        }
+
+        .details-list {
+            padding-left: 0 !important;
+        }
+
+        .details-list .item {
+            padding: 0.5rem 0 !important;
+            border: none !important;
+        }
+
+        .details-list .item::before {
+            content: "✓";
+            color: #21ba45;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        /* 動畫效果 */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        /* 響應式設計 */
+        @media only screen and (max-width: 768px) {
+            .maintenance-title {
+                font-size: 2rem !important;
+            }
+
+            .maintenance-icon {
+                font-size: 3rem;
+            }
+
+            .ui.stackable.grid>.column {
+                margin-bottom: 1rem !important;
+            }
+
+            .social-buttons .ui.button {
+                width: 100%;
+                margin: 0.25rem 0;
+            }
+        }
+
+        @media only screen and (max-width: 480px) {
+            .maintenance-wrapper {
+                padding: 1rem 0.5rem;
+            }
+
+            .maintenance-title {
+                font-size: 1.8rem !important;
+            }
+
+            .maintenance-subtitle {
+                font-size: 1rem;
+            }
+        }
+
+        /* Semantic UI 自定義覆蓋 */
+        .ui.segment {
+            box-shadow: 0 4px 8px rgba(34, 36, 38, 0.1) !important;
+        }
+
+        .ui.message {
+            box-shadow: 0 2px 4px rgba(34, 36, 38, 0.1) !important;
+        }
+
+        .ui.header .sub.header {
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="maintenance-wrapper">
+        <div class="ui container maintenance-container">
+
+            <!-- 主標題區域 -->
+            <div class="maintenance-header fade-in">
+                <div class="maintenance-icon">🔧</div>
+                <h1 class="ui header maintenance-title">
+                    網站維護中
+                    <div class="sub header maintenance-subtitle">
+                        我們正在進行系統維護，為您提供更好的服務體驗<br>
+                        維護期間造成不便，敬請見諒
+                    </div>
+                </h1>
+            </div>
+
+            <!-- 狀態訊息 -->
+            <div class="ui message status-segment fade-in">
+                <div class="ui grid">
+                    <div class="two wide column">
+                        <i class="cog loading icon status-icon"></i>
+                    </div>
+                    <div class="fourteen wide column">
+                        <div class="header">系統維護進行中</div>
+                        <p>我們的技術團隊正在努力進行系統優化，預計很快就會完成。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 維護詳情 -->
+            <div class="ui segment maintenance-details fade-in">
+                <h3 class="ui header">
+                    <i class="list icon"></i>
+                    <div class="content">
+                        本次維護內容
+                        <div class="sub header">以下項目正在進行中</div>
+                    </div>
+                </h3>
+                <div class="ui list details-list">
+                    <div class="item">系統安全性更新與強化</div>
+                    <div class="item">資料庫效能優化</div>
+                    <div class="item">新功能部署與測試</div>
+                    <div class="item">使用者介面改善</div>
+                    <div class="item">系統穩定性增強</div>
+                </div>
+            </div>
+
+            <!-- 底部訊息 -->
+            <div class="ui center aligned basic segment fade-in" style="margin-top: 3rem;">
+                <p style="color: #767676;">
+                    <i class="heart icon" style="color: #e03997;"></i>
+                    感謝您的耐心等候，我們會盡快恢復服務
+                </p>
+                <div class="ui tiny text">
+                    &copy; 2025 PiNews拍新聞-自傳媒互利平台. 版權所有.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="semantic/dist/semantic.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // 淡入動畫效果
+            $('.fade-in').each(function (i) {
+                $(this).delay(i * 200).queue(function () {
+                    $(this).addClass('fade-in').dequeue();
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

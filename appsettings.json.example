@@ -1,0 +1,16 @@
+{
+  "ConnectionStrings": {
+    "PiNewsConStr": "Data Source=SERVER;Initial Catalog=DATABASE;User ID=USERNAME;Password=PASSWORD;TrustServerCertificate=True"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  }
+}
+
+/*
+  NOTE: This file is a placeholder/example. Do NOT commit real credentials.
+  Put real secrets in environment variables or use dotnet user-secrets during development.
+*/

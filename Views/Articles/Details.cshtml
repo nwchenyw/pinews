@@ -1,0 +1,11 @@
+@model PiNewsCore.Models.Reverse.Article
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<h1>@Model.Title</h1>
+<p class="text-muted">分類：@Model.Category | 發布時間：@(Model.DateTime.HasValue ? Model.DateTime.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm") : "")</p>
+<hr />
+<div>
+    @Html.Raw(Model.Content)
+</div>

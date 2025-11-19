@@ -1,0 +1,26 @@
+## Visual Studio / .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+
+# Rider
+.idea/
+
+# ASP.NET Core
+appsettings*.json
+secrets.json
+wwwroot/node_modules/
+
+# Logs
+*.log
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# dotnet tools
+.config/dotnet-tools.json
