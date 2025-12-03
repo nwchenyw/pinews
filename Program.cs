@@ -2,10 +2,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.HttpOverrides;
 using PiNewsCore.Data;
 using PiNewsCore.Models.Reverse;
+using PiNewsCore.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+
+// Add HttpClient factory for making HTTP requests
+builder.Services.AddHttpClient();
 
 // Add session support
 builder.Services.AddDistributedMemoryCache();
@@ -15,6 +19,10 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+// Register Sitemap services
+builder.Services.AddScoped<ISitemapService, SitemapService>();
+builder.Services.AddHostedService<SitemapSchedulerService>();
 
 // Check if we should use demo mode (in-memory database)
 var useDemoMode = builder.Configuration.GetValue<bool>("UseDemoMode", true);
