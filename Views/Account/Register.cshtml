@@ -1,0 +1,68 @@
+@{
+    ViewData["Title"] = "會員註冊";
+}
+
+<div class="ui container" style="margin-top: 50px;">
+    <div class="ui middle aligned center aligned grid">
+        <div class="column" style="max-width: 550px;">
+            <h2 class="ui blue header">
+                <div class="content">
+                    會員註冊
+                </div>
+            </h2>
+            <form class="ui large form" method="post" asp-action="Register">
+                @Html.AntiForgeryToken()
+                <div class="ui stacked segment">
+                    @if (ViewData["Error"] != null)
+                    {
+                        <div class="ui negative message">
+                            <p>@ViewData["Error"]</p>
+                        </div>
+                    }
+                    @if (ViewData["Success"] != null)
+                    {
+                        <div class="ui positive message">
+                            <p>@ViewData["Success"]</p>
+                        </div>
+                    }
+                    
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <i class="user icon"></i>
+                            <input type="text" name="Name" placeholder="姓名" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <i class="id card icon"></i>
+                            <input type="text" name="Id_Number" placeholder="身分證字號" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <i class="envelope icon"></i>
+                            <input type="email" name="Email" placeholder="電子郵件" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <i class="phone icon"></i>
+                            <input type="tel" name="Phone" placeholder="手機號碼" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <i class="lock icon"></i>
+                            <input type="password" name="Password" placeholder="密碼" required>
+                        </div>
+                    </div>
+                    <button class="ui fluid large blue submit button" type="submit">註冊</button>
+                </div>
+            </form>
+
+            <div class="ui message">
+                已經是會員？ <a href="/Account/Login">立即登入</a>
+            </div>
+        </div>
+    </div>
+</div>

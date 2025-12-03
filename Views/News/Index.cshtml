@@ -1,0 +1,118 @@
+@model List<PiNewsCore.Models.Reverse.Article>
+@{
+    ViewData["Title"] = "新聞列表";
+    var categoryId = ViewData["CategoryId"] as int? ?? 0;
+    var currentPage = ViewData["CurrentPage"] as int? ?? 1;
+    var totalPages = ViewData["TotalPages"] as int? ?? 1;
+}
+
+@if (ViewData["DbError"] != null)
+{
+    <div class="ui negative message">
+        <div class="header">資料庫錯誤</div>
+        <p>@ViewData["DbError"]</p>
+    </div>
+}
+
+<div class="ui fitted basic segment">
+    <span></span>
+    <div class="ui feed container">
+        <div class="event">
+            <div class="label">
+                <i class="history icon"></i>
+            </div>
+            <div class="content">
+                <div class="ui breadcrumb">
+                    <a class="section" href="/">首頁</a>
+                    <div class="divider"> / </div>
+                    <div class="active section">新聞列表</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="main" class="ui container">
+        <div class="ui stackable grid">
+            <div class="twelve wide column">
+                @if (!Model.Any())
+                {
+                    <div class="ui message">
+                        <p>目前沒有文章可顯示。</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="ui items">
+                        @foreach (var article in Model)
+                        {
+                            <div class="item">
+                                @if (article.Front_Img_Id.HasValue && article.Front_Img_Id.Value > 0)
+                                {
+                                    <div class="ui small image">
+                                        <a href="/News/Detail/@article.Id">
+                                            <img src="/Image.aspx?id=@article.Front_Img_Id" alt="@article.Title">
+                                        </a>
+                                    </div>
+                                }
+                                else if (!string.IsNullOrEmpty(article.Relate_Img))
+                                {
+                                    <div class="ui small image">
+                                        <a href="/News/Detail/@article.Id">
+                                            <img src="@article.Relate_Img" alt="@article.Title">
+                                        </a>
+                                    </div>
+                                }
+                                <div class="content">
+                                    <a class="header" href="/News/Detail/@article.Id">@article.Title</a>
+                                    <div class="meta">
+                                        <span class="date">@(article.DateTime?.ToString("yyyy-MM-dd HH:mm") ?? "")</span>
+                                        <span class="author">@(article.Author ?? "拍新聞")</span>
+                                    </div>
+                                    <div class="description">
+                                        <p>@Html.Raw((article.Content ?? "").Length > 200 ? (article.Content ?? "").Substring(0, 200) + "..." : article.Content)</p>
+                                    </div>
+                                    <div class="extra">
+                                        <a href="/News/Detail/@article.Id" class="ui button">閱讀更多</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- 分頁 -->
+                    @if (totalPages > 1)
+                    {
+                        <div class="ui pagination menu">
+                            @if (currentPage > 1)
+                            {
+                                <a class="item" href="/News/Category/@categoryId?page=@(currentPage - 1)">
+                                    <i class="left chevron icon"></i>
+                                </a>
+                            }
+                            @for (int i = 1; i <= totalPages; i++)
+                            {
+                                <a class="item @(i == currentPage ? "active" : "")" href="/News/Category/@categoryId?page=@i">@i</a>
+                            }
+                            @if (currentPage < totalPages)
+                            {
+                                <a class="item" href="/News/Category/@categoryId?page=@(currentPage + 1)">
+                                    <i class="right chevron icon"></i>
+                                </a>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+
+            <!-- 側邊欄 -->
+            <div class="four wide column">
+                <div class="ui segment">
+                    <h4 class="ui header">熱門文章</h4>
+                    <div class="ui list">
+                        <!-- 這裡可以加入熱門文章 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
