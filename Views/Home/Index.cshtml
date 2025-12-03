@@ -1,30 +1,152 @@
-@model IEnumerable<PiNewsCore.Models.Reverse.Article>
 @{
     ViewData["Title"] = "首頁";
+    var articles = ViewData["Articles"] as List<PiNewsCore.Models.Reverse.Article> ?? new List<PiNewsCore.Models.Reverse.Article>();
+    var banners = ViewData["Banners"] as List<PiNewsCore.Models.Reverse.Banner> ?? new List<PiNewsCore.Models.Reverse.Banner>();
+    var marquees = ViewData["Marquees"] as List<PiNewsCore.Models.Reverse.Marquee> ?? new List<PiNewsCore.Models.Reverse.Marquee>();
 }
 
-<h1>最新文章</h1>
 @if (ViewData["DbError"] != null)
 {
-    <div class="alert alert-warning">資料庫錯誤：@ViewData["DbError"]</div>
+    <div class="ui negative message">
+        <div class="header">資料庫錯誤</div>
+        <p>@ViewData["DbError"]</p>
+    </div>
 }
 
-<div class="list-group">
-    @if (!Model.Any())
-    {
-        <div class="alert alert-info">目前沒有文章可顯示。</div>
-    }
-    else
-    {
-        @foreach (var item in Model)
+<!-- 跑馬燈 -->
+<div class="ui fitted basic segment">
+    <span></span>
+    <div id="broadcast" class="ui feed container">
+        <div class="event">
+            <div class="label" style="position: relative;">
+                <i class="bullhorn icon"></i>
+                <i class="clockwise rotated wifi icon" style="top: 4px; position: absolute; right: -27px;"></i>
+            </div>
+            <div class="content">
+                @if (marquees.Any())
+                {
+                    @foreach (var marquee in marquees)
+                    {
+                        <p class="anime-text">
+                            <a href="@(marquee.Link ?? "#")">@marquee.Text</a>
+                        </p>
+                    }
+                }
+                else
+                {
+                    <p class="anime-text">
+                        <a href="#">拍新聞，拍心情，拍美食，拍感動，拍出自己的創意新聞</a>
+                    </p>
+                    <p class="anime-text">
+                        <a href="/Account/Login">拍新聞徵求線上創意文稿、圖片、影音，歡迎投稿</a>
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- 輪播橫幅 -->
+    <div id="main" class="ui container">
+        @if (banners.Any())
         {
-            <a class="list-group-item list-group-item-action" href="/Articles/Details/@item.Id">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">@item.Title</h5>
-                    <small>@(item.DateTime.HasValue ? item.DateTime.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm") : "")</small>
+            <div class="splide left-show ui container">
+                <div class="splide__track">
+                    <ul class="splide__list">
+                        @foreach (var banner in banners)
+                        {
+                            <li class="splide__slide">
+                                <div class="splide__slide__container">
+                                    @if (!string.IsNullOrEmpty(banner.Link))
+                                    {
+                                        <a href="@banner.Link">
+                                            <img src="/Image.aspx?id=@banner.Image_Id" alt="@banner.Title">
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <img src="/Image.aspx?id=@banner.Image_Id" alt="@banner.Title">
+                                    }
+                                </div>
+                            </li>
+                        }
+                    </ul>
                 </div>
-                <p class="mb-1">@((item.Content ?? string.Empty).Length > 150 ? (item.Content ?? string.Empty).Substring(0, 150) + "..." : item.Content)</p>
-            </a>
+                <div class="splide__progress">
+                    <div class="splide__progress__bar"></div>
+                </div>
+            </div>
         }
-    }
+
+        <!-- 頭條新聞 -->
+        <div class="ui pv-4 container">
+            <h2>頭條新聞</h2>
+            <div class="top-show ui four cards">
+                @if (articles.Any())
+                {
+                    @foreach (var article in articles)
+                    {
+                        <div class="ui raised link card">
+                            @if (article.Front_Img_Id.HasValue && article.Front_Img_Id.Value > 0)
+                            {
+                                <div class="image">
+                                    <a href="/News/Detail/@article.Id">
+                                        <img src="/Image.aspx?id=@article.Front_Img_Id" alt="@article.Title">
+                                    </a>
+                                </div>
+                            }
+                            else if (!string.IsNullOrEmpty(article.Relate_Img))
+                            {
+                                <div class="image">
+                                    <a href="/News/Detail/@article.Id">
+                                        <img src="@article.Relate_Img" alt="@article.Title">
+                                    </a>
+                                </div>
+                            }
+                            <div class="content">
+                                <a href="/News/Detail/@article.Id" class="header">@article.Title</a>
+                            </div>
+                            <div class="extra content">
+                                <div class="left floated author">
+                                    <i class="user icon"></i>@(article.Author ?? "拍新聞")
+                                </div>
+                                <div class="right floated">
+                                    <i class="calendar icon"></i>@(article.DateTime?.ToString("yyyy-MM-dd") ?? "")
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="ui message">
+                        <p>目前沒有文章可顯示。</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        // 初始化輪播
+        document.addEventListener('DOMContentLoaded', function () {
+            var splide = document.querySelector('.splide');
+            if (splide) {
+                new Splide(splide, {
+                    type: 'loop',
+                    perPage: 1,
+                    autoplay: true,
+                    interval: 3000,
+                }).mount();
+            }
+
+            // 跑馬燈動畫
+            $('.anime-text').each(function(index) {
+                $(this).delay(index * 3000).fadeIn(1000).delay(3000).fadeOut(1000, function() {
+                    $(this).appendTo($(this).parent()).show();
+                });
+            });
+        });
+    </script>
+}

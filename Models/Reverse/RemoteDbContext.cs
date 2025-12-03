@@ -92,8 +92,10 @@ public partial class RemoteDbContext : DbContext
     public virtual DbSet<subscribe_payment> subscribe_payments { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=118.232.49.109;Initial Catalog=Pi news;User ID=sa;Password=!QAZxsw2;TrustServerCertificate=True");
+    {
+        // Configuration is done in Program.cs via dependency injection
+        // Do not configure here to avoid conflicts with in-memory database for testing
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

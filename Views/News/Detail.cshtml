@@ -1,0 +1,133 @@
+@model PiNewsCore.Models.Reverse.Article
+@{
+    ViewData["Title"] = Model.Title ?? "文章詳情";
+    ViewData["Description"] = Model.Content != null && Model.Content.Length > 0 ? 
+        System.Text.RegularExpressions.Regex.Replace(Model.Content, "<.*?>", "").Substring(0, Math.Min(160, System.Text.RegularExpressions.Regex.Replace(Model.Content, "<.*?>", "").Length)) : 
+        "拍新聞文章";
+    ViewData["Author"] = Model.Author ?? "拍新聞";
+    ViewData["Keywords"] = $"{Model.Title},拍新聞,台灣新聞";
+    ViewData["OgType"] = "article";
+    ViewData["OgUrl"] = $"https://www.pinews.asia/News/Detail/{Model.Id}";
+    ViewData["OgImage"] = !string.IsNullOrEmpty(Model.Relate_Img) ? Model.Relate_Img : "https://www.pinews.asia/img/PiNewsGIF2.gif";
+    ViewData["ArticlePublished"] = Model.DateTime?.ToString("yyyy-MM-ddTHH:mm:ssZ");
+    ViewData["Section"] = "新聞";
+    
+    var relatedArticles = ViewData["RelatedArticles"] as List<PiNewsCore.Models.Reverse.Article> ?? new List<PiNewsCore.Models.Reverse.Article>();
+}
+
+<div class="ui fitted basic segment">
+    <span></span>
+    <div class="ui feed container">
+        <div class="event">
+            <div class="label">
+                <i class="history icon"></i>
+            </div>
+            <div class="content">
+                <div class="ui breadcrumb">
+                    <a class="section" href="/">首頁</a>
+                    <div class="divider"> / </div>
+                    <a class="section" href="/News/Category/1">新聞</a>
+                    <div class="divider"> / </div>
+                    <div class="active section">@Model.Title</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="main" class="ui container">
+        <h1 class="ui header">@Model.Title</h1>
+        <div id="article" class="ui grid container">
+            <div class="eleven wide column">
+                <div class="top-show">
+                    @if (Model.Front_Img_Id.HasValue && Model.Front_Img_Id.Value > 0)
+                    {
+                        <div class="ui segment">
+                            <div class="ui image">
+                                <img src="/Image.aspx?id=@Model.Front_Img_Id" alt="@Model.Title">
+                            </div>
+                        </div>
+                    }
+                    else if (!string.IsNullOrEmpty(Model.Relate_Img))
+                    {
+                        <div class="ui segment">
+                            <div class="ui image">
+                                <img src="@Model.Relate_Img" alt="@Model.Title">
+                            </div>
+                        </div>
+                    }
+                    <div id="preview">
+                        <div class="meta" style="margin-bottom: 20px;">
+                            <span><i class="user icon"></i>@(Model.Author ?? "拍新聞")</span>
+                            <span style="margin-left: 20px;"><i class="calendar icon"></i>@(Model.DateTime?.ToString("yyyy-MM-dd HH:mm") ?? "")</span>
+                        </div>
+                        @* Note: Content from database may contain HTML. This is user-generated content from existing database. *@
+                        @* TODO: Implement HTML sanitization for security in future enhancement *@
+                        @Html.Raw(Model.Content)
+                    </div>
+                    
+                    <!-- 社群分享 -->
+                    <div class="ui segment" style="margin-top: 30px;">
+                        <h4>分享這篇文章</h4>
+                        <div class="ui labeled button">
+                            <div class="ui blue button">
+                                <i class="facebook icon"></i> Facebook
+                            </div>
+                            <a class="ui basic blue left pointing label">
+                                分享
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右側欄 -->
+            <div class="ui five wide column" style="padding-left: 0;">
+                <div class="ui sticky bottom-show">
+                    <!-- 文章統計 -->
+                    <div id="post_statistic" class="ui segment">
+                        <h4>文章資訊</h4>
+                        <div class="ui list">
+                            <div class="item">
+                                <i class="eye icon"></i>
+                                <div class="content">點閱數</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 相關文章 -->
+                    @if (relatedArticles.Any())
+                    {
+                        <div class="ui segment">
+                            <h4>相關文章</h4>
+                            <div class="ui divided items">
+                                @foreach (var related in relatedArticles)
+                                {
+                                    <div class="item">
+                                        <div class="content">
+                                            <a class="header" href="/News/Detail/@related.Id">@related.Title</a>
+                                            <div class="meta">
+                                                <span>@(related.DateTime?.ToString("yyyy-MM-dd") ?? "")</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // 初始化 sticky 側邊欄
+            $('.ui.sticky').sticky({
+                context: '#article',
+                offset: 80
+            });
+        });
+    </script>
+}

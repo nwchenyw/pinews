@@ -1,0 +1,85 @@
+@model PiNewsCore.Models.Reverse.Member
+@{
+    ViewData["Title"] = "會員中心";
+    var articles = ViewData["Articles"] as List<PiNewsCore.Models.Reverse.Article> ?? new List<PiNewsCore.Models.Reverse.Article>();
+}
+
+<div class="ui container" style="margin-top: 30px;">
+    <h2 class="ui header">
+        <i class="user icon"></i>
+        <div class="content">
+            會員中心
+            <div class="sub header">歡迎，@Model.Name</div>
+        </div>
+    </h2>
+
+    <div class="ui grid">
+        <div class="four wide column">
+            <div class="ui vertical menu">
+                <a class="active item">
+                    <i class="home icon"></i>
+                    個人資料
+                </a>
+                <a class="item" href="/OnlinePost">
+                    <i class="edit icon"></i>
+                    發表文章
+                </a>
+                <a class="item">
+                    <i class="file icon"></i>
+                    我的文章
+                </a>
+                <a class="item" href="/Account/Logout">
+                    <i class="sign out icon"></i>
+                    登出
+                </a>
+            </div>
+        </div>
+
+        <div class="twelve wide column">
+            <div class="ui segment">
+                <h3 class="ui header">個人資料</h3>
+                <div class="ui form">
+                    <div class="field">
+                        <label>姓名</label>
+                        <input type="text" value="@Model.Name" readonly>
+                    </div>
+                    <div class="field">
+                        <label>電話</label>
+                        <input type="text" value="@Model.Phone" readonly>
+                    </div>
+                    <div class="field">
+                        <label>身分證字號</label>
+                        <input type="text" value="@Model.Id_number" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui segment">
+                <h3 class="ui header">我的文章</h3>
+                @if (articles.Any())
+                {
+                    <div class="ui divided items">
+                        @foreach (var article in articles)
+                        {
+                            <div class="item">
+                                <div class="content">
+                                    <a class="header" href="/News/Detail/@article.Id">@article.Title</a>
+                                    <div class="meta">
+                                        <span>@(article.DateTime?.ToString("yyyy-MM-dd HH:mm") ?? "")</span>
+                                        <span>狀態: @(article.Status == 1 ? "已發布" : "待審核")</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="ui message">
+                        <p>您還沒有發表任何文章。</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

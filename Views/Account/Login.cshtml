@@ -1,0 +1,44 @@
+@{
+    ViewData["Title"] = "會員登入";
+}
+
+<div class="ui container" style="margin-top: 50px;">
+    <div class="ui middle aligned center aligned grid">
+        <div class="column" style="max-width: 450px;">
+            <h2 class="ui blue header">
+                <div class="content">
+                    會員登入
+                </div>
+            </h2>
+            <form class="ui large form" method="post" asp-action="Login">
+                @Html.AntiForgeryToken()
+                <div class="ui stacked segment">
+                    @if (ViewData["Error"] != null)
+                    {
+                        <div class="ui negative message">
+                            <p>@ViewData["Error"]</p>
+                        </div>
+                    }
+                    
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <i class="user icon"></i>
+                            <input type="text" name="username" placeholder="帳號 (身分證字號)" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <i class="lock icon"></i>
+                            <input type="password" name="password" placeholder="密碼" required>
+                        </div>
+                    </div>
+                    <button class="ui fluid large blue submit button" type="submit">登入</button>
+                </div>
+            </form>
+
+            <div class="ui message">
+                還不是會員？ <a href="/Account/Register">立即註冊</a>
+            </div>
+        </div>
+    </div>
+</div>
