@@ -1,6 +1,15 @@
 @model PiNewsCore.Models.Reverse.Article
 @{
     ViewData["Title"] = Model.Title ?? "文章詳情";
+    ViewData["Description"] = Model.Content != null ? System.Text.RegularExpressions.Regex.Replace(Model.Content, "<.*?>", "").Substring(0, Math.Min(160, Model.Content.Length)) : "拍新聞文章";
+    ViewData["Author"] = Model.Author ?? "拍新聞";
+    ViewData["Keywords"] = $"{Model.Title},拍新聞,台灣新聞";
+    ViewData["OgType"] = "article";
+    ViewData["OgUrl"] = $"https://www.pinews.asia/News/Detail/{Model.Id}";
+    ViewData["OgImage"] = !string.IsNullOrEmpty(Model.Relate_Img) ? Model.Relate_Img : "https://www.pinews.asia/img/PiNewsGIF2.gif";
+    ViewData["ArticlePublished"] = Model.DateTime?.ToString("yyyy-MM-ddTHH:mm:ssZ");
+    ViewData["Section"] = "新聞";
+    
     var relatedArticles = ViewData["RelatedArticles"] as List<PiNewsCore.Models.Reverse.Article> ?? new List<PiNewsCore.Models.Reverse.Article>();
 }
 
