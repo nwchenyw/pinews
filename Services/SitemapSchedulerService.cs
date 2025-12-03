@@ -22,11 +22,11 @@ namespace PiNewsCore.Services
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                var now = DateTime.Now;
-                var nextMidnight = now.Date.AddDays(1); // Next midnight (00:00)
+                var now = DateTime.UtcNow;
+                var nextMidnight = now.Date.AddDays(1); // Next midnight (00:00 UTC)
                 var delay = nextMidnight - now;
 
-                _logger.LogInformation($"Next sitemap generation scheduled at {nextMidnight:yyyy-MM-dd HH:mm:ss}");
+                _logger.LogInformation($"Next sitemap generation scheduled at {nextMidnight:yyyy-MM-dd HH:mm:ss} UTC");
 
                 try
                 {

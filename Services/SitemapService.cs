@@ -11,18 +11,21 @@ namespace PiNewsCore.Services
         private readonly IWebHostEnvironment _environment;
         private readonly IConfiguration _configuration;
         private readonly ILogger<SitemapService> _logger;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _sitemapPath;
 
         public SitemapService(
             RemoteDbContext dbContext,
             IWebHostEnvironment environment,
             IConfiguration configuration,
-            ILogger<SitemapService> logger)
+            ILogger<SitemapService> logger,
+            IHttpClientFactory httpClientFactory)
         {
             _dbContext = dbContext;
             _environment = environment;
             _configuration = configuration;
             _logger = logger;
+            _httpClientFactory = httpClientFactory;
             _sitemapPath = Path.Combine(_environment.WebRootPath, "sitemap.xml");
         }
 
@@ -93,7 +96,7 @@ namespace PiNewsCore.Services
 
                 // Create XML document
                 var doc = new XDocument(
-                    new XDeclaration("1.0", "UTF-8", null),
+                    new XDeclaration("1.0", "utf-8", null),
                     urlset
                 );
 
@@ -140,7 +143,7 @@ namespace PiNewsCore.Services
                 var baseUrl = _configuration["SiteBaseUrl"] ?? "https://pinews.com";
                 var sitemapUrl = $"{baseUrl}/sitemap.xml";
 
-                using var httpClient = new HttpClient();
+                var httpClient = _httpClientFactory.CreateClient();
                 httpClient.Timeout = TimeSpan.FromSeconds(30);
 
                 // Submit to Google

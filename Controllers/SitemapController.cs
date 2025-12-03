@@ -50,10 +50,18 @@ namespace PiNewsCore.Controllers
         {
             try
             {
-                // TODO: Add authentication check to ensure only admins can trigger this
-                // For now, anyone can trigger it
+                // Check if user is logged in
+                var memberIdStr = HttpContext.Session.GetString("MemberId");
+                if (string.IsNullOrEmpty(memberIdStr))
+                {
+                    _logger.LogWarning("Unauthorized sitemap regeneration attempt");
+                    return Unauthorized("請先登入");
+                }
                 
-                _logger.LogInformation("Manual sitemap regeneration triggered");
+                // TODO: Add IsAdmin check when admin role system is implemented
+                // For now, any logged-in user can regenerate sitemap
+                
+                _logger.LogInformation("Manual sitemap regeneration triggered by user {MemberId}", memberIdStr);
                 
                 await _sitemapService.GenerateSitemapAsync();
                 await _sitemapService.SubmitSitemapAsync();

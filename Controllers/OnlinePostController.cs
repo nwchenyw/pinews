@@ -49,16 +49,9 @@ namespace PiNewsCore.Controllers
                 _remoteDb.Articles.Add(article);
                 await _remoteDb.SaveChangesAsync();
 
-                // Update sitemap when article is created (will be included when status is changed to 1)
-                try
-                {
-                    await _sitemapService.UpdateArticleSitemapAsync(article.Id);
-                    _logger.LogInformation($"Sitemap updated for new article {article.Id}");
-                }
-                catch (Exception sitemapEx)
-                {
-                    _logger.LogWarning(sitemapEx, $"Failed to update sitemap for article {article.Id}, but article was created successfully");
-                }
+                // Note: Sitemap will be updated when article status changes to 1 (published)
+                // For now, we don't update the sitemap for pending articles (Status = 0)
+                _logger.LogInformation($"Article {article.Id} created with pending status");
 
                 ViewData["Success"] = "文章已送出，等待審核。";
                 return View();
