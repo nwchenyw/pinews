@@ -26,15 +26,23 @@ Demo 模式使用記憶體資料庫（In-Memory Database）並自動填充測試
 ## 執行步驟
 
 1. 確保已安裝 .NET 8 SDK
-2. 執行以下指令：
 
+2. **重要：複製靜態檔案到 wwwroot**
+```bash
+# 複製 CSS、JS、圖片和 Semantic UI 到 wwwroot 目錄
+cp -r css wwwroot/
+cp -r img wwwroot/
+cp -r semantic wwwroot/
+```
+
+3. 執行應用程式：
 ```bash
 dotnet restore
 dotnet build
 dotnet run
 ```
 
-3. 開啟瀏覽器訪問 `http://localhost:5000` 或 `https://localhost:5001`
+4. 開啟瀏覽器訪問 `http://localhost:5000` 或 `https://localhost:5001`
 
 ## Demo 資料
 
@@ -95,7 +103,17 @@ dotnet run
 
 ⚠️ **Demo 模式的資料僅存在記憶體中**，重新啟動應用程式後會重置。
 
-⚠️ **靜態檔案路徑**：請確保 `css/`, `js/`, `img/`, `semantic/` 等資料夾已複製到 `wwwroot/` 目錄下。
+⚠️ **靜態檔案設定**：首次執行前，請將靜態檔案複製到 wwwroot 目錄：
+```bash
+cp -r css wwwroot/
+cp -r img wwwroot/
+cp -r semantic wwwroot/
+```
+
+這些靜態檔案包含：
+- `css/` - 樣式表（main.css, animation.css 等）
+- `img/` - 圖片資源（Logo、新聞圖片等）
+- `semantic/` - Semantic UI 框架檔案
 
 ## 螢幕截圖
 
