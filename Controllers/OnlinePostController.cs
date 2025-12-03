@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PiNewsCore.Models.Reverse;
+using PiNewsCore.Services;
 
 namespace PiNewsCore.Controllers
 {
@@ -7,11 +8,13 @@ namespace PiNewsCore.Controllers
     {
         private readonly RemoteDbContext _remoteDb;
         private readonly ILogger<OnlinePostController> _logger;
+        private readonly ISitemapService _sitemapService;
 
-        public OnlinePostController(RemoteDbContext remoteDb, ILogger<OnlinePostController> logger)
+        public OnlinePostController(RemoteDbContext remoteDb, ILogger<OnlinePostController> logger, ISitemapService sitemapService)
         {
             _remoteDb = remoteDb;
             _logger = logger;
+            _sitemapService = sitemapService;
         }
 
         // GET: /OnlinePost
@@ -45,6 +48,17 @@ namespace PiNewsCore.Controllers
                 
                 _remoteDb.Articles.Add(article);
                 await _remoteDb.SaveChangesAsync();
+
+                // Update sitemap when article is created (will be included when status is changed to 1)
+                try
+                {
+                    await _sitemapService.UpdateArticleSitemapAsync(article.Id);
+                    _logger.LogInformation($"Sitemap updated for new article {article.Id}");
+                }
+                catch (Exception sitemapEx)
+                {
+                    _logger.LogWarning(sitemapEx, $"Failed to update sitemap for article {article.Id}, but article was created successfully");
+                }
 
                 ViewData["Success"] = "文章已送出，等待審核。";
                 return View();

@@ -40,6 +40,7 @@ namespace PiNewsCore.Data
             );
 
             context.Members.Add(new Member { Id = 1, Name = "測試會員", Id_number = "A123456789", Password = "test123", Phone = "0912345678", Register_Time = DateTime.UtcNow.AddMonths(-1), Certification = true });
+            context.Members.Add(new Member { Id = 2, Name = "測試用戶", Id_number = "K0963822225", Password = "aaa0963822225", Phone = "0963822225", Register_Time = DateTime.UtcNow.AddMonths(-1), Certification = true });
 
             context.SaveChanges();
         }
