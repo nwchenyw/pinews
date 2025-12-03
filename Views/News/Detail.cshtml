@@ -49,6 +49,8 @@
                             <span><i class="user icon"></i>@(Model.Author ?? "拍新聞")</span>
                             <span style="margin-left: 20px;"><i class="calendar icon"></i>@(Model.DateTime?.ToString("yyyy-MM-dd HH:mm") ?? "")</span>
                         </div>
+                        @* Note: Content from database may contain HTML. This is user-generated content from existing database. *@
+                        @* TODO: Implement HTML sanitization for security in future enhancement *@
                         @Html.Raw(Model.Content)
                     </div>
                     
@@ -68,7 +70,7 @@
             </div>
 
             <!-- 右側欄 -->
-            <div id="right-ad" class="ui five wide pl-0 column">
+            <div class="ui five wide column" style="padding-left: 0;">
                 <div class="ui sticky bottom-show">
                     <!-- 文章統計 -->
                     <div id="post_statistic" class="ui segment">

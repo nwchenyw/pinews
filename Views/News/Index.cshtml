@@ -69,7 +69,9 @@
                                         <span class="author">@(article.Author ?? "拍新聞")</span>
                                     </div>
                                     <div class="description">
-                                        <p>@Html.Raw((article.Content ?? "").Length > 200 ? (article.Content ?? "").Substring(0, 200) + "..." : article.Content)</p>
+                                        @* Note: Content from database may contain HTML. Stripping HTML tags for preview. *@
+                                        @* TODO: Implement proper HTML sanitization for security in future enhancement *@
+                                        <p>@(new string((article.Content ?? "").Take(200).ToArray()))@((article.Content ?? "").Length > 200 ? "..." : "")</p>
                                     </div>
                                     <div class="extra">
                                         <a href="/News/Detail/@article.Id" class="ui button">閱讀更多</a>

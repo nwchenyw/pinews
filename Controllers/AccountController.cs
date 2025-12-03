@@ -28,7 +28,8 @@ namespace PiNewsCore.Controllers
         {
             try
             {
-                // 這裡應該實作密碼驗證邏輯
+                // NOTE: Password is stored in plain text in existing database
+                // TODO: Implement password hashing (e.g., ASP.NET Core Identity or BCrypt) in future enhancement
                 var member = await _remoteDb.Members
                     .FirstOrDefaultAsync(m => m.Id_number == username && m.Password == password);
 
@@ -78,7 +79,7 @@ namespace PiNewsCore.Controllers
                 }
 
                 // 新增會員
-                member.Register_Time = DateTime.Now;
+                member.Register_Time = DateTime.UtcNow;
                 member.Certification = false; // 未驗證
                 
                 _remoteDb.Members.Add(member);

@@ -40,7 +40,7 @@ namespace PiNewsCore.Controllers
             try
             {
                 article.User_Id = int.Parse(memberIdStr);
-                article.DateTime = DateTime.Now;
+                article.DateTime = DateTime.UtcNow;
                 article.Status = 0; // 待審核
                 
                 _remoteDb.Articles.Add(article);
