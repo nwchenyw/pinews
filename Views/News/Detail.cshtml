@@ -1,7 +1,9 @@
 @model PiNewsCore.Models.Reverse.Article
 @{
     ViewData["Title"] = Model.Title ?? "文章詳情";
-    ViewData["Description"] = Model.Content != null ? System.Text.RegularExpressions.Regex.Replace(Model.Content, "<.*?>", "").Substring(0, Math.Min(160, Model.Content.Length)) : "拍新聞文章";
+    ViewData["Description"] = Model.Content != null && Model.Content.Length > 0 ? 
+        System.Text.RegularExpressions.Regex.Replace(Model.Content, "<.*?>", "").Substring(0, Math.Min(160, System.Text.RegularExpressions.Regex.Replace(Model.Content, "<.*?>", "").Length)) : 
+        "拍新聞文章";
     ViewData["Author"] = Model.Author ?? "拍新聞";
     ViewData["Keywords"] = $"{Model.Title},拍新聞,台灣新聞";
     ViewData["OgType"] = "article";

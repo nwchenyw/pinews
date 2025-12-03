@@ -23,25 +23,16 @@ namespace PiNewsCore.Controllers
                 const int pageSize = 20;
                 var skip = (page - 1) * pageSize;
 
-                // 根據分類ID撈取文章
-                var query = _remoteDb.Articles
-                    .Where(a => a.Status == 1 && a.DateTime != null);
-
-                // 透過 Article_Rec_Cat 關聯表來找對應分類的文章
-                var articleIds = await _remoteDb.Article_Rec_Cats
-                    .Where(arc => arc.Rec_cat_id == id)
-                    .Select(arc => arc.Article_id)
-                    .ToListAsync();
-
-                var articles = await query
-                    .Where(a => articleIds.Contains(a.Id))
+                // Get articles by category - use Category field directly
+                var articles = await _remoteDb.Articles
+                    .Where(a => a.Status == 1 && a.DateTime != null && a.Category == id.ToString())
                     .OrderByDescending(a => a.DateTime)
                     .Skip(skip)
                     .Take(pageSize)
                     .ToListAsync();
 
-                var totalCount = await query
-                    .Where(a => articleIds.Contains(a.Id))
+                var totalCount = await _remoteDb.Articles
+                    .Where(a => a.Status == 1 && a.DateTime != null && a.Category == id.ToString())
                     .CountAsync();
 
                 ViewData["CategoryId"] = id;
