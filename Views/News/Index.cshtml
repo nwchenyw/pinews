@@ -50,7 +50,7 @@
                                 {
                                     <div class="ui small image">
                                         <a href="/News/Detail/@article.Id">
-                                            <img src="/Image.aspx?id=@article.Front_Img_Id" alt="@article.Title">
+                                            <img src="/Image.aspx?ID=@article.Front_Img_Id" alt="@article.Title">
                                         </a>
                                     </div>
                                 }
@@ -69,9 +69,7 @@
                                         <span class="author">@(article.Author ?? "拍新聞")</span>
                                     </div>
                                     <div class="description">
-                                        @* Note: Content from database may contain HTML. Stripping HTML tags for preview. *@
-                                        @* TODO: Implement proper HTML sanitization for security in future enhancement *@
-                                        <p>@(new string((article.Content ?? "").Take(200).ToArray()))@((article.Content ?? "").Length > 200 ? "..." : "")</p>
+                                        <p>@(article.Description ?? "")</p>
                                     </div>
                                     <div class="extra">
                                         <a href="/News/Detail/@article.Id" class="ui button">閱讀更多</a>

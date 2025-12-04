@@ -1,15 +1,21 @@
+﻿@{
+    var isLoggedIn = Context.Session.GetString("User_Id") != null;
+    var userName = Context.Session.GetString("Name") ?? "";
+}
 <!DOCTYPE html>
 <html lang="zh-Hant">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"] - 拍新聞</title>
-    
+
     <!-- Google News and SEO Meta Tags -->
-    <meta name="description" content="@(ViewData["Description"] ?? "拍新聞 - 全民創報，百業創聞，萬眾創利。提供最新新聞、國際新聞、兩岸新聞、財經新聞、公益新聞等多元內容。")" />
+    <meta name="description"
+        content="@(ViewData["Description"] ?? "拍新聞 - 全民創報，百業創聞，萬眾創利。提供最新新聞、國際新聞、兩岸新聞、財經新聞、公益新聞等多元內容。")" />
     <meta name="keywords" content="@(ViewData["Keywords"] ?? "拍新聞,新聞,台灣新聞,國際新聞,財經,公益,生活,旅遊,美食")" />
     <meta name="author" content="@(ViewData["Author"] ?? "拍新聞")" />
-    
+
     <!-- Open Graph / Facebook Meta Tags for Social Sharing -->
     <meta property="og:type" content="@(ViewData["OgType"] ?? "website")" />
     <meta property="og:title" content="@ViewData["Title"] - 拍新聞" />
@@ -20,7 +26,7 @@
     {
         <meta property="og:image" content="@ViewData["OgImage"]" />
     }
-    
+
     <!-- Article-specific Meta Tags for Google News -->
     @if (ViewData["ArticlePublished"] != null)
     {
@@ -28,127 +34,231 @@
         <meta property="article:author" content="@ViewData["Author"]" />
         <meta property="article:section" content="@(ViewData["Section"] ?? "新聞")" />
     }
-    
+
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="@ViewData["Title"] - 拍新聞" />
     <meta name="twitter:description" content="@(ViewData["Description"] ?? "拍新聞 - 全民創報，百業創聞，萬眾創利")" />
-    
+
     <!-- Google News Specific -->
     <meta name="news_keywords" content="@(ViewData["Keywords"] ?? "台灣,新聞,國際,財經,生活")" />
     @if (ViewData["ArticlePublished"] != null)
     {
         <meta name="publish_date" content="@ViewData["ArticlePublished"]" />
     }
-    
+
     <!-- Favicon -->
-    <link rel="icon" href="~/img/favicon.ico" type="image/x-icon" />
-    
+    <link rel="shortcut icon" href="~/img/favicon.ico" />
+
     <!-- Fonts and Stylesheets -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100;300;400;500;700;900&family=Noto+Serif+TC:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="~/semantic/dist/semantic.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@splidejs/splide@@latest/dist/css/splide.min.css">
-    <link rel="stylesheet" href="~/css/main.css">
-    <link rel="stylesheet" href="~/css/animation.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@splidejs/splide@latest/dist/css/splide.min.css">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@@splidejs/splide-extension-video@latest/dist/css/splide-extension-video.min.css">
+    <link rel="stylesheet" href="~/css/main.css?07">
+    <link rel="stylesheet" href="~/css/animation.css?02">
+
+    <style>
+        .ui.medium.image {
+            width: 300px;
+            height: auto;
+            font-size: 1rem;
+            margin: auto !important;
+        }
+
+        form.pushable .ui.scrolling.pusher.container {
+            overflow: auto;
+            height: 100vh !important;
+        }
+
+        form.pushable .ui.scrolling.pusher.dimmed.container {
+            overflow: hidden;
+        }
+
+        .pushable:not(body)>.dimmed.pusher:after {
+            position: fixed;
+        }
+
+        #light-search .menu .message {
+            display: none;
+        }
+
+        #main-menu .dropdown .menu .message {
+            display: none;
+        }
+
+        @@media screen and (min-width: 768px) {
+            #main-menu #search {
+                display: -webkit-box;
+            }
+        }
+
+        @@media screen and (max-width: 767.98px) {
+            form.pushable .ui.scrolling.pusher.container {
+                margin-right: 0;
+                padding-right: 1rem;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <!-- Top Bar -->
-    <div class="ui yellow inverted basic segment">
-        <div class="ui horizontal divided list">
-            <div class="item">
-                <div class="content">
-                    <a href="/Member"><i class="user friends icon"></i>會員中心</a>
-                </div>
-            </div>
-            <div class="item">
-                <div class="content">
-                    <a href="/Account/Logout"><i class="door open icon"></i>登出</a>
-                </div>
-            </div>
-            <div class="item">
-                <div class="content">
-                    <a href="/Account/Login"><i class="user friends icon"></i>會員登入</a>
-                </div>
-            </div>
-            <div class="item">
-                <div class="content">
-                    <a href="/ContactUs"><i class="envelope icon"></i>聯絡我們</a>
+    <div id="page-wrapper" class="ui blurring dimmable">
+        <div id="loading" class="ui inverted dimmer"
+            style="z-index: 1200 !important; position: fixed; background: rgba(230, 167, 50, 0.8);">
+            <div class="content">
+                <div class="ui inverted icon huge header" style="color: #257fa4;">
+                    <i class="newspaper icon"></i>
+                    Loading...
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Sidebar Menu -->
-    <div class="ui top demo vertical inverted sidebar labeled icon blue menu">
-        <a class="item" href="/News/Category/1">拍新聞</a>
-        <a class="item" href="/News/Category/2">拍國際</a>
-        <a class="item" href="/News/Category/3">拍兩岸</a>
-        <a class="item" href="/News/Category/4">拍財經</a>
-        <a class="item" href="/News/Category/5">拍公益</a>
-        <a class="item" href="/News/Category/6">拍人物</a>
-        <a class="item" href="/News/Category/7">拍生活</a>
-        <a class="item" href="/News/Category/8">拍旅行</a>
-        <a class="item" href="/News/Category/9">拍美食</a>
-        <a class="item" href="/OnlinePost">線上投稿</a>
-    </div>
-
-    <!-- Logo and Main Menu -->
-    <div class="ui container">
-        <div class="ui medium image">
-            <a href="/"><img src="~/img/PiNewsGIF2.gif" alt="拍新聞"></a>
+        <!-- Sidebar Menu -->
+        <div class="ui top demo vertical inverted sidebar labeled icon blue menu">
+            @await Component.InvokeAsync("Menu", new { viewName = "Default" })
         </div>
-        <div id="main-menu" class="ui blue inverted pointing sticky menu">
-            <a class="horizontal item" href="/News/Category/1">拍新聞</a>
-            <a class="horizontal item" href="/News/Category/2">拍國際</a>
-            <a class="horizontal item" href="/News/Category/3">拍兩岸</a>
-            <a class="horizontal item" href="/News/Category/24">拍教育</a>
-            <a class="horizontal item" href="/News/Category/4">拍財經</a>
-            <a class="horizontal item" href="/News/Category/11">拍企業</a>
-            <a class="horizontal item" href="/News/Category/5">拍公益</a>
-            <a class="horizontal item" href="/News/Category/6">拍人物</a>
-            <a class="horizontal item" href="/News/Category/7">拍生活</a>
-            <a class="horizontal item" href="/News/Category/8">拍旅行</a>
-            <a class="horizontal item" href="/News/Category/9">拍美食</a>
-            <a class="horizontal item" href="/OnlinePost">線上投稿</a>
-            <div class="right menu">
-                <div class="item">
-                    <div id="search" class="ui transparent icon inverted">
-                        <input type="text" class="hidden" placeholder="Search...">
-                        <i class="search link icon" style="margin: 3.5px 0;"></i>
+
+        <div class="ui scrolling pusher container">
+            <!-- Top Bar -->
+            <div class="ui basic yellow inverted segment" style="margin-top: 0;">
+                <div class="ui container">
+                    <div class="ui right floated horizontal divided list">
+                        @if (isLoggedIn)
+                        {
+                            <a class="right item" id="Member" href="/Member">
+                                <div class="content">
+                                    <i class="user friends icon"></i>會員中心
+                                </div>
+                            </a>
+                            <a class="right item" id="Logout" href="/Account/Logout">
+                                <div class="content">
+                                    <i class="door open icon"></i>登出
+                                </div>
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="right item" id="Login" href="/Account/Login">
+                                <div class="content">
+                                    <i class="user friends icon"></i>網記登入/註冊
+                                </div>
+                            </a>
+                        }
+                        <a class="right item" href="/ContactUs">
+                            <div class="content">
+                                <i class="envelope icon"></i>聯絡我們
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="ui horizontal list">
+                        @if (isLoggedIn && !string.IsNullOrEmpty(userName))
+                        {
+                            <div class="item">歡迎回來，@userName</div>
+                        }
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Main Content -->
-    @RenderBody()
+            <!-- Logo -->
+            <a class="ui medium image" href="/">
+                <img src="~/img/PiNewsGIF2.gif">
+            </a>
 
-    <!-- Footer -->
-    <div class="ui inverted vertical footer segment">
-        <div class="ui container">
-            <div class="ui stackable inverted divided equal height stackable grid">
-                <div class="three wide column">
-                    <h4 class="ui inverted header">關於</h4>
-                    <div class="ui inverted link list">
-                        <a href="#" class="item">關於我們</a>
-                        <a href="/ContactUs" class="item">聯絡我們</a>
+            <!-- Hidden Menu Button (Mobile) -->
+            <div id="hidden-menu" class="hidden">
+                <div class="option item"><i class="bars icon"></i></div>
+            </div>
+
+            <!-- Main Menu -->
+            <div id="main-menu" class="ui pointing blue inverted sticky menu">
+                @await Component.InvokeAsync("Menu", new { viewName = "Horizontal" })
+                <span class="underline"></span>
+
+                <div class="ui hidden top right floating dropdown icon item" style="background: #e6a732;">
+                    <i class="search link icon"></i>
+                    <div class="menu" style="background: #e6a732;">
+                        <div class="ui transparent icon inverted search input">
+                            <input type="search" placeholder="Search..." />
+                            <a class="ui tertiary icon button" style="padding: 0 !important;"><i
+                                    class="search link icon"></i></a>
+                        </div>
                     </div>
                 </div>
-                <div class="seven wide column">
-                    <h4 class="ui inverted header">拍新聞</h4>
-                    <p>全民創報，百業創聞，萬眾創利。</p>
+
+                <span class="right menu">
+                    <span class="item" style="background: #e6a732; border-radius: 0 .28571429rem 0 0;">
+                        <span id="search" class="ui transparent icon inverted search">
+                            <input type="search" class="hidden" placeholder="Search..." />
+                            <a class="ui tertiary icon button" style="padding: 0 !important;"><i
+                                    class="search link icon" style="margin: 2.5px 0;"></i></a>
+                        </span>
+                    </span>
+                </span>
+            </div>
+
+            <div class="ui hidden placeholder"></div>
+
+            <!-- Content -->
+            <div class="ui container">
+                <div class="ui fitted basic segment">
+                    @RenderBody()
                 </div>
+
+                <!-- Footer -->
+                <div class="ui container">
+                    <div class="ui container grid">
+                        <div id="bottom-left-menu" class="ui five wide top-show column">
+                            <div class="ui large two column grid list">
+                                @await Component.InvokeAsync("Menu", new { viewName = "Footer" })
+                            </div>
+                        </div>
+                        <div id="bottom-center-menu" class="ui six wide center aligned middle aligned top-show column">
+                            <a class="ui medium image" href="/" style="margin-right: -6.5rem;">
+                                <img src="~/img/PiNewsGIF1.gif">
+                            </a>
+                            @await Component.InvokeAsync("SiteSettings")
+                        </div>
+                        <div id="bottom-right-menu" class="ui five wide top-show middle aligned column">
+                            <div class="ui middle aligned animated list" style="text-align: center;">
+                                @await Component.InvokeAsync("FooterAdvertisement")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui gray center aligned basic inverted horizontally fitted segment">拍新聞</div>
             </div>
         </div>
-    </div>
+    </div><!-- End #page-wrapper -->
 
     <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/lib/jquery.min.js"></script>
     <script src="~/semantic/dist/semantic.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@@splidejs/splide@@latest/dist/js/splide.min.js"></script>
-    <script src="~/js/site.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@@splidejs/splide@latest/dist/js/splide.min.js"></script>
+    <script src="~/js/main.js?cw"></script>
+    <script src="~/js/CookieCheck.js"></script>
+
+    <script>
+        $('#main-menu .ui.dropdown').dropdown({ transition: 'fade up' })
+
+        // Dimmer handling - 與原始版本相同的邏輯
+        $(document).ready(function () {
+            $('#page-wrapper').dimmer({
+                closable: false,
+                duration: { show: 0, hide: 400 }
+            }).dimmer('show');
+        });
+
+        $(window).on('load', function () {
+            $('#page-wrapper').dimmer('hide');
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>

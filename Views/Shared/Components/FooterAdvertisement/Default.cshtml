@@ -1,0 +1,8 @@
+@model IEnumerable<PiNewsCore.Models.Reverse.Advertisement>
+
+@foreach (var ad in Model)
+{
+    <a class="item" href="@ad.Link" target="_blank">
+        <img src="/Image.aspx?ID=@ad.Img_Id" style="height: 35px;" />
+    </a>
+}

@@ -1,0 +1,8 @@
+@model IEnumerable<PiNewsCore.Models.Reverse.Menu>
+
+@foreach (var menu in Model)
+{
+    <div class="column item">
+        <div><a class="ui link" href="/News/@menu.Id">@menu.Name</a></div>
+    </div>
+}

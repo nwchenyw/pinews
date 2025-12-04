@@ -28,37 +28,36 @@ builder.Services.AddHostedService<SitemapSchedulerService>();
 var useDemoMode = builder.Configuration.GetValue<bool>("UseDemoMode", true);
 var connectionString = builder.Configuration.GetConnectionString("PiNewsConStr");
 
-if (useDemoMode || string.IsNullOrEmpty(connectionString) || connectionString.Contains("SERVER") || connectionString.Contains("DATABASE"))
+if (useDemoMode || string.IsNullOrEmpty(connectionString))
 {
     // Use in-memory database for demo/testing
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseInMemoryDatabase("PiNewsDemo"));
-    
+
     builder.Services.AddDbContext<RemoteDbContext>(options =>
-        options.UseInMemoryDatabase("PiNewsDemo"));
+    {
+        options.UseInMemoryDatabase("PiNewsDemo");
+        // Disable concurrency detector to allow parallel queries
+        options.EnableThreadSafetyChecks(false);
+    });
 }
 else
 {
     // Use real SQL Server database
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlServer(
-            connectionString,
-            sqlOptions => sqlOptions.EnableRetryOnFailure()
-        )
+        options.UseSqlServer(connectionString)
     );
-    
+
     builder.Services.AddDbContext<RemoteDbContext>(options =>
-        options.UseSqlServer(
-            connectionString,
-            sqlOptions => sqlOptions.EnableRetryOnFailure()
-        )
-    );
+    {
+        options.UseSqlServer(connectionString);
+    });
 }
 
 var app = builder.Build();
 
 // Seed demo data if using in-memory database
-if (useDemoMode || string.IsNullOrEmpty(connectionString) || connectionString.Contains("SERVER") || connectionString.Contains("DATABASE"))
+if (useDemoMode || string.IsNullOrEmpty(connectionString))
 {
     using (var scope = app.Services.CreateScope())
     {
@@ -90,6 +89,22 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
+
+// 相容舊專案的路由格式
+app.MapControllerRoute(
+    name: "news_info",
+    pattern: "News/Info/{id}",
+    defaults: new { controller = "News", action = "Detail" });
+
+app.MapControllerRoute(
+    name: "news_category",
+    pattern: "News/{id}",
+    defaults: new { controller = "News", action = "Category" });
+
+app.MapControllerRoute(
+    name: "news_all",
+    pattern: "News/all/{id}/{duration}/{orderType}",
+    defaults: new { controller = "News", action = "All" });
 
 app.MapControllerRoute(
     name: "default",

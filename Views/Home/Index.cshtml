@@ -1,8 +1,17 @@
+﻿@using PiNewsCore.Controllers
 @{
     ViewData["Title"] = "首頁";
-    var articles = ViewData["Articles"] as List<PiNewsCore.Models.Reverse.Article> ?? new List<PiNewsCore.Models.Reverse.Article>();
-    var banners = ViewData["Banners"] as List<PiNewsCore.Models.Reverse.Banner> ?? new List<PiNewsCore.Models.Reverse.Banner>();
-    var marquees = ViewData["Marquees"] as List<PiNewsCore.Models.Reverse.Marquee> ?? new List<PiNewsCore.Models.Reverse.Marquee>();
+    var banners = ViewData["Banners"] as List<PiNewsCore.Models.Reverse.Banner> ?? new
+    List<PiNewsCore.Models.Reverse.Banner>();
+    var marquees = ViewData["Marquees"] as List<PiNewsCore.Models.Reverse.Marquee> ?? new
+    List<PiNewsCore.Models.Reverse.Marquee>();
+    var recommendations = ViewData["Recommendations"] as List<PiNewsCore.Models.Reverse.Recommendation> ?? new
+    List<PiNewsCore.Models.Reverse.Recommendation>();
+    var recommendationArticles = ViewData["RecommendationArticles"] as Dictionary<int, List<ArticleViewModel>> ?? new
+    Dictionary<int, List<ArticleViewModel>>();
+    var longSquareAds = ViewData["LongSquareAds"] as List<PiNewsCore.Models.Reverse.Advertisement> ?? new
+    List<PiNewsCore.Models.Reverse.Advertisement>();
+    var leftSquareAd = ViewData["LeftSquareAd"] as PiNewsCore.Models.Reverse.Advertisement;
 }
 
 @if (ViewData["DbError"] != null)
@@ -14,139 +23,255 @@
 }
 
 <!-- 跑馬燈 -->
-<div class="ui fitted basic segment">
-    <span></span>
-    <div id="broadcast" class="ui feed container">
-        <div class="event">
-            <div class="label" style="position: relative;">
-                <i class="bullhorn icon"></i>
-                <i class="clockwise rotated wifi icon" style="top: 4px; position: absolute; right: -27px;"></i>
-            </div>
-            <div class="content">
-                @if (marquees.Any())
+<span></span>
+<div id="broadcast" class="ui feed container">
+    <div class="event">
+        <div class="label" style="position: relative;">
+            <i class="bullhorn icon"></i>
+            <i class="clockwise rotated wifi icon" style="top: 4px; position: absolute; right: -27px;"></i>
+        </div>
+        <div class="content">
+            @if (marquees.Any())
+            {
+                @foreach (var marquee in marquees)
                 {
-                    @foreach (var marquee in marquees)
-                    {
-                        <p class="anime-text">
-                            <a href="@(marquee.Link ?? "#")">@marquee.Text</a>
-                        </p>
-                    }
-                }
-                else
-                {
-                    <p class="anime-text">
-                        <a href="#">拍新聞，拍心情，拍美食，拍感動，拍出自己的創意新聞</a>
-                    </p>
-                    <p class="anime-text">
-                        <a href="/Account/Login">拍新聞徵求線上創意文稿、圖片、影音，歡迎投稿</a>
+                    <p class="anime-text hidden"
+                        style="color: @(marquee.color ?? "inherit"); font-family: @(marquee.font_name ?? "inherit"); font-size: @(marquee.font_size ?? "inherit"); font-weight: @(marquee.font_weight ?? "inherit");">
+                        <a href="@(marquee.Link ?? "#")">@marquee.Text</a>
                     </p>
                 }
-            </div>
+            }
+            else
+            {
+                <p class="anime-text">
+                    <a href="#">拍新聞，拍心情，拍美食，拍感動，拍出自己的創意新聞</a>
+                </p>
+                <p class="anime-text">
+                    <a href="/Account/Login">拍新聞徵求線上創意文稿、圖片、影音，歡迎投稿</a>
+                </p>
+            }
         </div>
     </div>
+</div>
 
+<div id="main" class="ui container">
     <!-- 輪播橫幅 -->
-    <div id="main" class="ui container">
-        @if (banners.Any())
-        {
-            <div class="splide left-show ui container">
-                <div class="splide__track">
-                    <ul class="splide__list">
-                        @foreach (var banner in banners)
-                        {
-                            <li class="splide__slide">
-                                <div class="splide__slide__container">
-                                    @if (!string.IsNullOrEmpty(banner.Link))
-                                    {
-                                        <a href="@banner.Link">
-                                            <img src="/Image.aspx?id=@banner.Image_Id" alt="@banner.Title">
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <img src="/Image.aspx?id=@banner.Image_Id" alt="@banner.Title">
-                                    }
-                                </div>
-                            </li>
-                        }
-                    </ul>
-                </div>
-                <div class="splide__progress">
-                    <div class="splide__progress__bar"></div>
-                </div>
-            </div>
-        }
+    @if (banners.Any())
+    {
+        <div class="splide left-show ui container">
+            <div class="splide__track">
+                <ul class="splide__list">
+                    @foreach (var banner in banners)
+                    {
+                        var isVideo = banner.isVideo == true;
+                        var videoType = banner.Video_type ?? "";
+                        var videoUrl = banner.Video_url ?? "";
+                        var videoDataAttr = isVideo
+                        ? (videoType == "youtube"
+                        ? $"data-splide-youtube='https://www.youtube.com/watch?v={videoUrl}'"
+                        : $"data-splide-vimeo='https://vimeo.com/{videoUrl}'")
+                        : "";
 
-        <!-- 頭條新聞 -->
-        <div class="ui pv-4 container">
-            <h2>頭條新聞</h2>
+                        <li class="splide__slide" @Html.Raw(videoDataAttr) data-font-size="@(banner.font_size ?? "inherit")"
+                            style="@(string.IsNullOrEmpty(banner.font_size) ? "inherit" : $"font-size: {banner.font_size}")">
+                            <a class="splide__slide__container" href="@banner.Link" target="_blank">
+                                @if (isVideo && videoType == "youtube")
+                                {
+                                    <img src="https://img.youtube.com/vi/@videoUrl/hqdefault.jpg" alt="@banner.Title" />
+                                }
+                                else if (!isVideo)
+                                {
+                                    <img src="/Image.aspx?ID=@banner.Image_Id" alt="@banner.Title" />
+                                }
+                            </a>
+                            <a href="@banner.Link" target="_blank">
+                                <h1 class="ui huge header"
+                                    style="font-family: @(banner.font_name ?? "inherit"); color: @(banner.color ?? "inherit");">
+                                    @banner.Title</h1>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="splide__progress">
+                <div class="splide__progress__bar"></div>
+            </div>
+        </div>
+    }
+
+    <!-- 推薦分類文章 -->
+    <div class="ui pv-4 container">
+        @foreach (var rec in recommendations)
+        {
+            var recLink = HomeController.GetRecommendationLink(rec);
+            var articles = recommendationArticles.ContainsKey(rec.Id) ? recommendationArticles[rec.Id] : new
+            List<ArticleViewModel>();
+
+            <h2>
+                <a href="@recLink"
+                    style="color: @(rec.font_color ?? "inherit"); font-family: @(rec.font_name ?? "inherit");">
+                    @rec.Category_Name
+                </a>
+            </h2>
             <div class="top-show ui four cards">
                 @if (articles.Any())
                 {
                     @foreach (var article in articles)
                     {
-                        <div class="ui raised link card">
-                            @if (article.Front_Img_Id.HasValue && article.Front_Img_Id.Value > 0)
-                            {
-                                <div class="image">
-                                    <a href="/News/Detail/@article.Id">
-                                        <img src="/Image.aspx?id=@article.Front_Img_Id" alt="@article.Title">
-                                    </a>
+                        <a class="ui raised link card" href="/News/Info/@article.Id">
+                            <div class="image">
+                                <div class="long square">
+                                    <img class="lazy" data-src="/Image.aspx?ID=@article.Front_Img_Id">
                                 </div>
-                            }
-                            else if (!string.IsNullOrEmpty(article.Relate_Img))
-                            {
-                                <div class="image">
-                                    <a href="/News/Detail/@article.Id">
-                                        <img src="@article.Relate_Img" alt="@article.Title">
-                                    </a>
-                                </div>
-                            }
-                            <div class="content">
-                                <a href="/News/Detail/@article.Id" class="header">@article.Title</a>
+                            </div>
+                            <div class="squeeze content">
+                                <div class="header">@article.Title</div>
                             </div>
                             <div class="extra content">
                                 <div class="left floated author">
-                                    <i class="user icon"></i>@(article.Author ?? "拍新聞")
+                                    <img class="ui avatar lazy image" data-src="/Image.aspx?ID=@article.Member_Img_Id">
+                                    @article.Author
                                 </div>
-                                <div class="right floated">
-                                    <i class="calendar icon"></i>@(article.DateTime?.ToString("yyyy-MM-dd") ?? "")
+                                <div class="bottom right floated author post-time">
+                                    <div class="meta">
+                                        <i class="calendar icon"></i>
+                                        <span class="category">@article.FormattedDateTime</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                     }
                 }
                 else
                 {
-                    <div class="ui message">
-                        <p>目前沒有文章可顯示。</p>
-                    </div>
+                    <span class="ui label">尚無文章上榜</span>
                 }
             </div>
-        </div>
+        }
     </div>
+
+    <!-- 三欄廣告 -->
+    @if (longSquareAds.Any())
+    {
+        <div id="advertise" class="ui doubling pv-4 three column grid">
+            @foreach (var ad in longSquareAds)
+            {
+                <div class="middle aligned column">
+                    <a href="@ad.Link" target="_blank">
+                        <img data-src="/Image.aspx?Id=@ad.Img_Id" class="img-responsive lazy">
+                    </a>
+                </div>
+            }
+        </div>
+    }
+
+    <!-- 彈出式廣告 -->
+    @if (leftSquareAd != null)
+    {
+        <div id="right-banner" class="ui toast card medium rectangle test ad"
+            data-show-title="@(leftSquareAd.Show_T == true ? "true" : "false")" style="padding: 0; display: none;">
+            <i class="right floated inverted close icon" style="margin: .2rem; z-index: 1;"></i>
+            <a class="@(leftSquareAd.Show_T == true ? "blurring dimmable " : "")image" href="@leftSquareAd.Link"
+                target="_blank">
+                <div class="ui inverted center dimmer">
+                    <div class="content">
+                        <div class="center">
+                            <div class="ui header">@leftSquareAd.Title</div>
+                        </div>
+                    </div>
+                </div>
+                <img class="ui medium image" src="/Image.aspx?Id=@leftSquareAd.Img_Id">
+            </a>
+        </div>
+    }
 </div>
 
 @section Scripts {
-    <script>
-        // 初始化輪播
-        document.addEventListener('DOMContentLoaded', function () {
-            var splide = document.querySelector('.splide');
-            if (splide) {
-                new Splide(splide, {
-                    type: 'loop',
-                    perPage: 1,
-                    autoplay: true,
-                    interval: 3000,
-                }).mount();
-            }
+    <script src="https://cdn.jsdelivr.net/npm/@@splidejs/splide@2.4.14/dist/js/splide.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/@@splidejs/splide-extension-video@0.4.1/dist/js/splide-extension-video.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js"></script>
+    <script type="text/javascript"
+        src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.plugins.min.js"></script>
 
-            // 跑馬燈動畫
-            $('.anime-text').each(function(index) {
-                $(this).delay(index * 3000).fadeIn(1000).delay(3000).fadeOut(1000, function() {
-                    $(this).appendTo($(this).parent()).show();
+    <script>
+        $(window).on('load', function () {
+            // 彈出式廣告
+            var hasRightBanner = @(leftSquareAd != null ? "true" : "false");
+            if (hasRightBanner) {
+                $('#right-banner').toast({
+                    class: 'visible',
+                    position: 'bottom right',
+                    displayTime: 0,
+                    closeIcon: true,
+                    cloneMode: false,
+                    onShow: function ($module) {
+                        if ($($module).data('show-title') == true) {
+                            $($module).children('.image').dimmer({
+                                on: 'hover',
+                                duration: {
+                                    show: 500,
+                                    hide: 500
+                                }
+                            });
+                        }
+                    }
                 });
-            });
+            }
         });
+
+        // Banner 輪播
+        var splideEl = document.querySelector('.splide');
+        if (splideEl) {
+            var banner_splide = new Splide('.splide', {
+                type: 'loop',
+                autoplay: true,
+                pauseOnHover: true,
+                pagination: false,
+                heightRatio: 5 / 16,
+                lazyLoad: 'nearby',
+                cover: true,
+                video: {
+                    autoplay: true,
+                    loop: true,
+                    hideControls: true,
+                    playerOptions: {
+                        youtube: {
+                            rel: 0,
+                            autoplay: 1,
+                            loop: 1,
+                            mute: 1,
+                            autohide: 1,
+                            showinfo: 0,
+                            controls: 0,
+                            modestbranding: 1
+                        },
+                    }
+                }
+            }).on('active', function (s) {
+                console.log('Splide active slide:', s.slide);
+                var fn = $(s.slide).attr('data-bg-fn');
+                var val = $(s.slide).attr('data-bg-val');
+
+                if (fn && val && window[fn]) {
+                    window[fn](val);
+                }
+
+                var $btn = $(s.slide).children('.splide__slide__container').children('button.splide__video__play');
+                if (!$btn.is("[type=button]")) {
+                    $(s.slide).children('.splide__slide__container').children('button.splide__video__play').attr('type', 'button');
+                }
+            });
+
+            // 掛載 Splide 及其擴展
+            if (window.splide && window.splide.Extensions) {
+                banner_splide.mount(window.splide.Extensions);
+            } else {
+                banner_splide.mount();
+            }
+        }
+
+        // 懶加載
+        $('.lazy').Lazy();
     </script>
 }

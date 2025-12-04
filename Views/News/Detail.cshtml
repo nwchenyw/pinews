@@ -1,18 +1,21 @@
 @model PiNewsCore.Models.Reverse.Article
 @{
     ViewData["Title"] = Model.Title ?? "文章詳情";
-    ViewData["Description"] = Model.Content != null && Model.Content.Length > 0 ? 
-        System.Text.RegularExpressions.Regex.Replace(Model.Content, "<.*?>", "").Substring(0, Math.Min(160, System.Text.RegularExpressions.Regex.Replace(Model.Content, "<.*?>", "").Length)) : 
-        "拍新聞文章";
+    ViewData["Description"] = Model.Content != null && Model.Content.Length > 0 ?
+    System.Text.RegularExpressions.Regex.Replace(Model.Content, "<.*?>", "").Substring(0, Math.Min(160,
+    System.Text.RegularExpressions.Regex.Replace(Model.Content, "<.*?>", "").Length)) :
+    "拍新聞文章";
     ViewData["Author"] = Model.Author ?? "拍新聞";
     ViewData["Keywords"] = $"{Model.Title},拍新聞,台灣新聞";
     ViewData["OgType"] = "article";
     ViewData["OgUrl"] = $"https://www.pinews.asia/News/Detail/{Model.Id}";
-    ViewData["OgImage"] = !string.IsNullOrEmpty(Model.Relate_Img) ? Model.Relate_Img : "https://www.pinews.asia/img/PiNewsGIF2.gif";
+    ViewData["OgImage"] = !string.IsNullOrEmpty(Model.Relate_Img) ? Model.Relate_Img :
+    "https://www.pinews.asia/img/PiNewsGIF2.gif";
     ViewData["ArticlePublished"] = Model.DateTime?.ToString("yyyy-MM-ddTHH:mm:ssZ");
     ViewData["Section"] = "新聞";
-    
-    var relatedArticles = ViewData["RelatedArticles"] as List<PiNewsCore.Models.Reverse.Article> ?? new List<PiNewsCore.Models.Reverse.Article>();
+
+    var relatedArticles = ViewData["RelatedArticles"] as List<PiNewsCore.Models.Reverse.Article> ?? new
+    List<PiNewsCore.Models.Reverse.Article>();
 }
 
 <div class="ui fitted basic segment">
@@ -43,7 +46,7 @@
                     {
                         <div class="ui segment">
                             <div class="ui image">
-                                <img src="/Image.aspx?id=@Model.Front_Img_Id" alt="@Model.Title">
+                                <img src="/Image.aspx?ID=@Model.Front_Img_Id" alt="@Model.Title">
                             </div>
                         </div>
                     }
@@ -58,13 +61,15 @@
                     <div id="preview">
                         <div class="meta" style="margin-bottom: 20px;">
                             <span><i class="user icon"></i>@(Model.Author ?? "拍新聞")</span>
-                            <span style="margin-left: 20px;"><i class="calendar icon"></i>@(Model.DateTime?.ToString("yyyy-MM-dd HH:mm") ?? "")</span>
+                            <span style="margin-left: 20px;"><i
+                                    class="calendar icon"></i>@(Model.DateTime?.ToString("yyyy-MM-dd HH:mm") ??
+                                                                "")</span>
                         </div>
                         @* Note: Content from database may contain HTML. This is user-generated content from existing database. *@
                         @* TODO: Implement HTML sanitization for security in future enhancement *@
                         @Html.Raw(Model.Content)
                     </div>
-                    
+
                     <!-- 社群分享 -->
                     <div class="ui segment" style="margin-top: 30px;">
                         <h4>分享這篇文章</h4>
@@ -122,7 +127,7 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             // 初始化 sticky 側邊欄
             $('.ui.sticky').sticky({
                 context: '#article',

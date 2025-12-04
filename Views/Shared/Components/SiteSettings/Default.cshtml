@@ -1,0 +1,13 @@
+@model Dictionary<string, string>
+
+<div id="social-media" class="ui basic fitted segment">
+    <a class="ui basic blue icon button" target="_blank" href="@(Model.GetValueOrDefault("Line", "#"))">
+        <i class="line icon"></i>
+    </a>
+    <a class="ui basic blue icon button" target="_blank" href="@(Model.GetValueOrDefault("FB", "#"))">
+        <i class="facebook f icon"></i>
+    </a>
+    <a class="ui basic blue icon button" target="_blank" href="@(Model.GetValueOrDefault("Youtube", "#"))">
+        <i class="youtube icon"></i>
+    </a>
+</div>
